@@ -1,0 +1,29 @@
+---
+- name: Remove a VPC 
+  ec2_vpc_net:
+    name: "{{ vpc_name }}"
+    region: "{{ region }}"
+    cidr_block: "{{ vpc_cidr_block }}"
+    state: absent
+  when: remove is defined
+
+- name: Create a dictionary of tags 
+  set_fact:
+    tags_dict: "{{ tags_dict|default({}) |  combine(item.1) }}"
+  with_indexed_items: "{{tags}}"
+  when: (tags is defined and create is defined)
+
+- name: Create a VPC 
+  ec2_vpc_net:
+    name: "{{ vpc_name }}"
+    cidr_block: "{{ vpc_cidr_block }}"
+    region: "{{ region }}"
+    state: present
+    dns_support: "{{ enable_dns_support | default ('true') }}"
+    dns_hostnames: "{{ enable_dns_hostnames | default ('true') }}"
+    multi_ok: "{{ vpc_multi_ok | default (omit) }}"
+    tenancy: "{{ vpc_tenancy | default (omit) }}"
+    tags: 
+      "{{ tags_dict | default (omit) }}" 
+  when: create is defined
+  register: vpc_output

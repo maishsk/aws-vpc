@@ -1,0 +1,4 @@
+enable_dns_hostnames: yes
+enable_dns_support: yes
+vpc_multi_ok: no
+vpc_tenancy: default
