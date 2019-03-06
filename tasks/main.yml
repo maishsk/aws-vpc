@@ -10,7 +10,7 @@
 - name: Create a dictionary of tags 
   set_fact:
     tags_dict: "{{ tags_dict|default({}) |  combine(item.1) }}"
-  with_indexed_items: "{{tags}}"
+  with_indexed_items: "{{ tags }}"
   when: (tags is defined and create is defined)
 
 - name: Create a VPC 
@@ -27,3 +27,10 @@
       "{{ tags_dict | default (omit) }}" 
   when: create is defined
   register: vpc_output
+
+- name: Create a Internet Gateway 
+  ec2_vpc_igw:
+    vpc_id: "{{ vpc_output.id }}"
+    state: present
+  when: create is defined
+  register: igw_output
