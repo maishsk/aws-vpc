@@ -26,7 +26,17 @@
     vpc_id: "{{ vpc_output.vpc.id }}"
     state: present
     tags: 
-      ["{{ tags_dict | default (omit) }}", Name: "{{ vpc_name }}"]
+      "{{ tags_dict | default (omit) }}" 
+  when: create is defined
+  register: igw_output
+
+- name: Create a Internet Gateway 
+  ec2_vpc_igw:
+    region: "{{ region }}"
+    vpc_id: "{{ vpc_output.vpc.id }}"
+    state: present
+    tags: 
+      Name: "{{vpc_name}}-igw"
   when: create is defined
   register: igw_output
 
