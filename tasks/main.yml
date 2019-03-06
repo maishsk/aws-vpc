@@ -34,24 +34,34 @@
 #   debug:
 #     var: igw_output
 #     verbosity: 4
-
-- name: Gather facts about a specific internet gateway by InternetGatewayId
-  ec2_vpc_igw_facts:
-    region: "{{ region }}"
-    internet_gateway_ids: "{{ igw_output.gateway_id }}"
-  register: igw_facts
+- name: Gather facts about VPC
+  ec2_vpc_net_facts:
+    filters:
+      "tag:Name": "{{ vpc_name }}"
+  register: vpc_fact    
 
 - name: Debug
   debug:
-    var: igw_facts
+    var: vpc_facts
     verbosity: 4
 
-# - name: Remove the IGW
-#   ec2_vpc_igw:
-#     vpc_id: "{{ vpc_output.vpc.id }}"
+# - name: Gather facts about a specific internet gateway by InternetGatewayId
+#   ec2_vpc_igw_facts:
 #     region: "{{ region }}"
-#     state: absent
-#   when: remove is defined
+#     internet_gateway_ids: "{{ igw_output.gateway_id }}"
+#   register: igw_facts
+
+# - name: Debug
+#   debug:
+#     var: igw_facts
+#     verbosity: 4
+
+- name: Remove the IGW
+  ec2_vpc_igw:
+    vpc_id: "{{ vpc_output.vpc.id }}"
+    region: "{{ region }}"
+    state: absent
+  when: remove is defined
 
 # - name: Remove a VPC 
 #   ec2_vpc_net:
