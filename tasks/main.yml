@@ -28,15 +28,9 @@
   when: create is defined
   register: vpc_output
 
-- name: Display all variables/facts known for a host
-  debug:
-    var: vpc_output.vpc.id
-    verbosity: 4
-
-
-#  - name: Create a Internet Gateway 
-#   ec2_vpc_igw:
-#     vpc_id: "{{ vpc_output.id }}"
-#     state: present
-#   when: create is defined
-#   register: igw_output
+ - name: Create a Internet Gateway 
+  ec2_vpc_igw:
+    vpc_id: "{{ vpc_output.vpc.id }}"
+    state: present
+  when: create is defined
+  register: igw_output
