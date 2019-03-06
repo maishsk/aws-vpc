@@ -27,7 +27,6 @@
     state: present
     tags: 
       "{{ tags_dict | default (omit) }}" 
-      Name: "{{ vpc_name }}-igw"
   when: create is defined
   register: igw_output
 
