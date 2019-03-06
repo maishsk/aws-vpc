@@ -38,7 +38,7 @@
   ec2_vpc_net_facts:
     region: "{{ region }}"
     filters:
-      "tag:Name: {{ vpc_name }}"
+      "tag:Name": "{{ vpc_name }}"
   register: vpc_facts    
 
 - name: Debug
