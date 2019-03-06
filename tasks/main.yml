@@ -30,17 +30,21 @@
   when: create is defined
   register: igw_output
 
+# - name: Debug
+#   debug:
+#     var: igw_output
+#     verbosity: 4
+
+- name: Gather facts about a specific internet gateway by InternetGatewayId
+  ec2_vpc_igw_facts:
+    region: "{{ region }}"
+    internet_gateway_ids: "{{ igw_output.gateway_id }}"
+  register: igw_facts
+
 - name: Debug
   debug:
-    var: igw_output
+    var: igw_facts
     verbosity: 4
-
-# - name: Gather facts about a specific internet gateway by InternetGatewayId
-#   ec2_vpc_igw_facts:
-#     region: ap-southeast-2
-#     profile: production
-#     internet_gateway_ids: igw-c1231234
-#   register: igw_facts
 
 # - name: Remove the IGW
 #   ec2_vpc_igw:
