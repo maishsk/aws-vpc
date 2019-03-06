@@ -43,7 +43,7 @@
 
 - name: Debug
   debug:
-    var: vpc_facts
+    var: vpc_facts.vpcs[0].id
     verbosity: 4
 
 # - name: Gather facts about a specific internet gateway by InternetGatewayId
