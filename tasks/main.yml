@@ -26,7 +26,7 @@
     vpc_id: "{{ vpc_output.vpc.id }}"
     state: present
     tags: 
-      "{{ tags_dict | default (omit) }}" 
+      ["{{ tags_dict | default (omit) }}", Name: "{{ vpc_name }}"]
   when: create is defined
   register: igw_output
 
