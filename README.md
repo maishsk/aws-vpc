@@ -1,6 +1,6 @@
 # aws-vpc
 
-Will create a VPC in an AWS region
+Will create a VPC in the specified AWS region. This role will also attach an Internet Gateway to the VPC.
 
 ## Requirements
 
@@ -60,7 +60,7 @@ To create the VPC
 
 To remove the VPC
 
-`ansible-playbook main.yml -e "remove=true"`
+`ansible-playbook main.yml -e "rollback=true"`
 
 ## License
 

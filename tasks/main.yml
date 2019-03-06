@@ -1,16 +1,8 @@
 ---
-- name: Remove a VPC 
-  ec2_vpc_net:
-    name: "{{ vpc_name }}"
-    region: "{{ region }}"
-    cidr_block: "{{ vpc_cidr_block }}"
-    state: absent
-  when: remove is defined
-
 - name: Create a dictionary of tags 
   set_fact:
     tags_dict: "{{ tags_dict|default({}) |  combine(item.1) }}"
-  with_indexed_items: "{{tags}}"
+  with_indexed_items: "{{ tags }}"
   when: (tags is defined and create is defined)
 
 - name: Create a VPC 
@@ -27,3 +19,36 @@
       "{{ tags_dict | default (omit) }}" 
   when: create is defined
   register: vpc_output
+
+- name: Create a Internet Gateway 
+  ec2_vpc_igw:
+    region: "{{ region }}"
+    vpc_id: "{{ vpc_output.vpc.id }}"
+    state: present
+    tags: 
+      Name: "{{vpc_name}}-igw"
+  when: create is defined
+  register: igw_output
+
+- name: Gather facts about VPC before deletion
+  ec2_vpc_net_facts:
+    region: "{{ region }}"
+    filters:
+      "tag:Name": "{{ vpc_name }}"
+  when: rollback is defined
+  register: vpc_facts    
+
+- name: Remove the IGW
+  ec2_vpc_igw:
+    vpc_id: "{{ vpc_facts.vpcs[0].id }}"
+    region: "{{ region }}"
+    state: absent
+  when: rollback is defined
+
+- name: Remove a VPC 
+  ec2_vpc_net:
+    name: "{{ vpc_name }}"
+    region: "{{ region }}"
+    cidr_block: "{{ vpc_cidr_block }}"
+    state: absent
+  when: rollback is defined
