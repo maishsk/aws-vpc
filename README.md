@@ -60,7 +60,7 @@ To create the VPC
 
 To remove the VPC
 
-`ansible-playbook main.yml -e "remove=true"`
+`ansible-playbook main.yml -e "rollback=true"`
 
 ## License
 

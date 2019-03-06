@@ -30,24 +30,20 @@
   when: create is defined
   register: igw_output
 
-- name: Gather facts about VPC
+- name: Gather facts about VPC before deletion
   ec2_vpc_net_facts:
     region: "{{ region }}"
     filters:
       "tag:Name": "{{ vpc_name }}"
-  when: remove is defined
+  when: rollback is defined
   register: vpc_facts    
 
-# - name: Debug
-#   debug:
-#     var: vpc_facts.vpcs[0].id
-#     verbosity: 4
 - name: Remove the IGW
   ec2_vpc_igw:
     vpc_id: "{{ vpc_facts.vpcs[0].id }}"
     region: "{{ region }}"
     state: absent
-  when: remove is defined
+  when: rollback is defined
 
 - name: Remove a VPC 
   ec2_vpc_net:
@@ -55,4 +51,4 @@
     region: "{{ region }}"
     cidr_block: "{{ vpc_cidr_block }}"
     state: absent
-  when: remove is defined
+  when: rollback is defined
