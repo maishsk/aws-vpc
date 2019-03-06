@@ -28,7 +28,7 @@
   when: create is defined
   register: vpc_output
 
- - name: Create a Internet Gateway 
+- name: Create a Internet Gateway 
   ec2_vpc_igw:
     vpc_id: "{{ vpc_output.vpc.id }}"
     state: present
