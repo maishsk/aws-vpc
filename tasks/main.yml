@@ -37,7 +37,7 @@
 - name: Gather facts about VPC
   ec2_vpc_net_facts:
     filters:
-      "tag:Name": "{{ vpc_name }}"
+      "tag:Name: {{ vpc_name }}"
   register: vpc_fact    
 
 - name: Debug
