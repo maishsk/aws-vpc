@@ -36,9 +36,10 @@
 #     verbosity: 4
 - name: Gather facts about VPC
   ec2_vpc_net_facts:
+    region: "{{ region }}"
     filters:
       "tag:Name: {{ vpc_name }}"
-  register: vpc_fact    
+  register: vpc_facts    
 
 - name: Debug
   debug:
