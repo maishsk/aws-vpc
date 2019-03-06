@@ -30,44 +30,29 @@
   when: create is defined
   register: igw_output
 
-# - name: Debug
-#   debug:
-#     var: igw_output
-#     verbosity: 4
 - name: Gather facts about VPC
   ec2_vpc_net_facts:
     region: "{{ region }}"
     filters:
       "tag:Name": "{{ vpc_name }}"
+  when: remove is defined
   register: vpc_facts    
-
-- name: Debug
-  debug:
-    var: vpc_facts.vpcs[0].id
-    verbosity: 4
-
-# - name: Gather facts about a specific internet gateway by InternetGatewayId
-#   ec2_vpc_igw_facts:
-#     region: "{{ region }}"
-#     internet_gateway_ids: "{{ igw_output.gateway_id }}"
-#   register: igw_facts
 
 # - name: Debug
 #   debug:
-#     var: igw_facts
+#     var: vpc_facts.vpcs[0].id
 #     verbosity: 4
-
 - name: Remove the IGW
   ec2_vpc_igw:
-    vpc_id: "{{ vpc_output.vpc.id }}"
+    vpc_id: "{{ vpc_facts.vpcs[0].id }}"
     region: "{{ region }}"
     state: absent
   when: remove is defined
 
-# - name: Remove a VPC 
-#   ec2_vpc_net:
-#     name: "{{ vpc_name }}"
-#     region: "{{ region }}"
-#     cidr_block: "{{ vpc_cidr_block }}"
-#     state: absent
-#   when: remove is defined
+- name: Remove a VPC 
+  ec2_vpc_net:
+    name: "{{ vpc_name }}"
+    region: "{{ region }}"
+    cidr_block: "{{ vpc_cidr_block }}"
+    state: absent
+  when: remove is defined
