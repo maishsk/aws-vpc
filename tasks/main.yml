@@ -20,6 +20,11 @@
   when: create is defined
   register: vpc_output
 
+- name: Store fact for further use
+  set_fact:
+    vpc_output: "{{ vpc_output }}"
+  when: create is defined
+
 - name: Create a Internet Gateway 
   ec2_vpc_igw:
     region: "{{ region }}"
@@ -27,8 +32,14 @@
     state: present
     tags: 
       Name: "{{vpc_name}}-igw"
+      VPCname: "{{ vpc_name }}"
   when: create is defined
   register: igw_output
+
+- name: Store fact for further use
+  set_fact:
+    igw_output: "{{ igw_output }}"
+  when: create is defined
 
 - name: Gather facts about VPC before deletion
   ec2_vpc_net_facts:
@@ -52,3 +63,7 @@
     cidr_block: "{{ vpc_cidr_block }}"
     state: absent
   when: rollback is defined
+
+# - name: Display all variables/facts 
+#   debug:
+#     var: hostvars[inventory_hostname]  
