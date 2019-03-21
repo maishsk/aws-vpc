@@ -1,0 +1,28 @@
+---
+- name: Gather facts about VPC before deletion
+  ec2_vpc_net_facts:
+    region: "{{ region }}"
+    filters:
+      "tag:Name": "{{ vpc_name }}"
+  register: vpc_facts
+
+- name: Set VPC ID fact
+  set_fact:
+    vpc_id: "{{ vpc_facts.vpcs[0].id }}"
+
+- name: Remove the IGW
+  ec2_vpc_igw:
+    region: "{{ region }}"
+    vpc_id: "{{ vpc_id }}"
+    state: absent
+
+- name: Remove a VPC 
+  ec2_vpc_net:
+    region: "{{ region }}"
+    name: "{{ vpc_name }}"
+    cidr_block: "{{ vpc_cidr_block }}"
+    state: absent
+
+# - name: Display all variables/facts 
+#   debug:
+#     var: hostvars[inventory_hostname]

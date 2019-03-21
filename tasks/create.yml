@@ -1,0 +1,31 @@
+---
+- name: Create a dictionary of tags 
+  set_fact:
+    tags_dict: "{{ tags_dict|default({}) |  combine(item.1) }}"
+  with_indexed_items: "{{ tags }}"
+  when: 
+    - tags is defined 
+
+- name: Create a VPC 
+  ec2_vpc_net:
+    region: "{{ region }}"
+    name: "{{ vpc_name }}"
+    cidr_block: "{{ vpc_cidr_block }}"
+    state: present
+    dns_support: "{{ enable_dns_support | default ('true') }}"
+    dns_hostnames: "{{ enable_dns_hostnames | default ('true') }}"
+    multi_ok: "{{ vpc_multi_ok | default (omit) }}"
+    tenancy: "{{ vpc_tenancy | default (omit) }}"
+    tags: 
+      "{{ tags_dict | default (omit) }}" 
+  register: vpc_output
+
+- name: Create a Internet Gateway 
+  ec2_vpc_igw:
+    region: "{{ region }}"
+    vpc_id: "{{ vpc_output.vpc.id }}"
+    state: present
+    tags: 
+      Name: "{{vpc_name}}-igw"
+      VPCname: "{{ vpc_name }}"
+  register: igw_output

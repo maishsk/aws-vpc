@@ -4,7 +4,7 @@ Will create a VPC in the specified AWS region. This role will also attach an Int
 
 ## Requirements
 
-None
+AWS credentials and the correct permissions to create the resources
 
 ## Role Variables
 
@@ -13,12 +13,12 @@ The variables uses in this role are
 | Variable Name | Required | Description | 
 |----|----|----|
 | `region`| **Yes** | The region that you will deploy into |
-| `vpc_cidr_block` | **Yes** | The CIDR block of VPC  | 
 | `vpc_name` | **Yes** | The name of the VPC | 
-| `enable_dns_support` | Optional | Enable DNS Support<br>   - Default `true` | 
-| `enable_dns_hostnames` | Optional | Enable AWS DNS support<br>   - Default `true` |
-| `vpc_multi_ok` | Optional | Create new VPC if another VPC with the same name and CIDR block exists? <br>   - Default `no` |
-| `vpc_tenancy` | Optional | Default or dedicated tenancy<br>   - Default `default` |
+| `vpc_cidr_block` | **Yes** | The CIDR block of VPC  |
+| `enable_dns_support` | Optional | Enable DNS Support<br> - Default `true` |
+| `enable_dns_hostnames` | Optional | Enable AWS DNS support<br> - Default `true` |
+| `vpc_multi_ok` | Optional | Create new VPC if another VPC with the same name and CIDR block exists? <br> - Default `no` |
+| `vpc_tenancy` | Optional | Default or dedicated tenancy<br> - Default `default` |
 
 ## Dependencies
 
@@ -26,11 +26,27 @@ None
 
 ## Example Playbook
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+### Download dependencies
 
+#### Create requirements file
+
+Create a `requirements.yml` file with the following contents
+```
+- src: https://github.com/maishsk/aws-vpc
+  version: master
+```
+
+#### Download dependencies
+Run the following command:
+```
+ansible-galaxy install -r requirements.yml --force -p .
+```
+
+### Create playbook
+Create a `main.yaml` file with the following contents:
 ```
 ---
-- name: Create a VPC
+- name: Create VPC
   hosts: localhost
   connection: local
   gather_facts: false
@@ -40,8 +56,7 @@ Including an example of how to use your role (for instance, with variables passe
     - aws-vpc
 ```
 
-And `vars/vars.yml` contains
-
+Create a `vars/vars.yml` with the content similar to:
 ```
 vpc_name: vpc_test
 vpc_cidr_block: 192.168.100.0/24
