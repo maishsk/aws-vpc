@@ -2,9 +2,9 @@
 - name: Create a dictionary of tags 
   set_fact:
     tags_dict: "{{ tags_dict|default({}) |  combine(item.1) }}"
-  with_indexed_items: "{{ tags }}"
+  with_indexed_items: "{{ aws_tags }}"
   when: 
-    - tags is defined 
+    - aws_tags is defined 
 
 - name: Create a VPC 
   ec2_vpc_net:
