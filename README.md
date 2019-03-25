@@ -19,6 +19,7 @@ The variables uses in this role are
 | `enable_dns_hostnames` | Optional | Enable AWS DNS support<br> - Default `true` |
 | `vpc_multi_ok` | Optional | Create new VPC if another VPC with the same name and CIDR block exists? <br> - Default `no` |
 | `vpc_tenancy` | Optional | Default or dedicated tenancy<br> - Default `default` |
+| `aws_tags` | Optional | List of tags to use during deployment (see example below) |
 
 ## Dependencies
 
@@ -46,14 +47,27 @@ ansible-galaxy install -r requirements.yml --force -p .
 Create a `main.yaml` file with the following contents:
 ```
 ---
-- name: Create VPC
+- name: VPC Provisioning
   hosts: localhost
   connection: local
   gather_facts: false
   vars_files:
-    - vars/vars.yml
-  roles:
-    - aws-vpc
+    - vars.yml
+
+  tasks:
+  - name: Create Process
+    include_role:
+      name: "{{ item }}"
+    with_items:
+      - aws-vpc
+    tags: [ 'never', 'create' ]
+
+  - name: Rollback Process
+    include_role:
+      name: "{{ item }}"
+    with_items:
+      - aws-vpc
+    tags: [ 'never', 'rollback' ]
 ```
 
 Create a `vars/vars.yml` with the content similar to:
@@ -61,7 +75,7 @@ Create a `vars/vars.yml` with the content similar to:
 vpc_name: vpc_test
 vpc_cidr_block: 192.168.100.0/24
 region: us-east-2
-tags:
+aws_tags:
  - foo: bar
  - blah: meh
  - ami: 3syllables
@@ -71,11 +85,11 @@ tags:
 
 To create the VPC
 
-`ansible-playbook main.yml -e "create=true"`
+`ansible-playbook main.yml --tags create`
 
 To remove the VPC
 
-`ansible-playbook main.yml -e "rollback=true"`
+`ansible-playbook main.yml --tags rollback`
 
 ## License
 
