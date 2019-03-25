@@ -52,7 +52,7 @@ Create a `main.yaml` file with the following contents:
   connection: local
   gather_facts: false
   vars_files:
-    - vars.yml
+    - vars/vars.yml
 
   tasks:
   - name: Create Process
