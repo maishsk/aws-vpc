@@ -47,7 +47,6 @@ ansible-galaxy install -r requirements.yml --force -p .
 Create a `main.yaml` file with the following contents:
 ```
 ---
----
 - name: VPC Provisioning
   hosts: localhost
   connection: local
