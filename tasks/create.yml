@@ -26,6 +26,6 @@
     vpc_id: "{{ vpc_output.vpc.id }}"
     state: present
     tags: 
-      Name: "{{vpc_name}}-igw"
+      Name: "{{ vpc_name }}-igw"
       VPCname: "{{ vpc_name }}"
   register: igw_output
